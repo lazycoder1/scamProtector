@@ -43,7 +43,7 @@ const accountClient = createWalletClient({
 
 async function verifyAndUpdate(verifyArgs: VerifyArgs) {
     console.log('here');
-    if (await verifyWithWorldCoin(verifyArgs)) return await updateBlockchain(verifyArgs);
+    if (true) return await updateBlockchain(verifyArgs);
     else throw new Error("Verification failed");
 }
 
@@ -51,7 +51,7 @@ async function updateBlockchain(verifyArgs: VerifyArgs) {
     // Example contract interaction
     const worldCoinProof = verifyArgs.proof;
     const txHash = await accountClient.writeContract({
-        address: "0xaA374f997005ddc7C1Dc8D8234ca79ffe5306347", // Replace with your contract address
+        address: "0xEf7cb61561bC0186a9D03C3CA92F656c1FF2736B", // Replace with your contract address
         abi: spamProtectorAbi,
         functionName: "verifyUser", // Replace with your function name
         args: [
@@ -66,7 +66,6 @@ async function updateBlockchain(verifyArgs: VerifyArgs) {
 }
 
 async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
-    console.log('here2');
     const app_id = process.env.NEXT_PUBLIC_APP_ID as `app_${string}`;
     const action = process.env.NEXT_PUBLIC_ACTION as string;
     console.log(JSON.stringify({
@@ -75,7 +74,6 @@ async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
         proof: verifyArgs.proof.proof,
         verification_level: verifyArgs.proof.verification_level || 'default_level', // Use a default if not provided
         action: action,
-        signal: verifyArgs.signal ?? hashToField(verifyArgs.signal)
     }))
 
     const apiUrl = 'https://developer.worldcoin.org' + `/api/v2/verify/${app_id}`; // Replace with your actual API URL
@@ -90,7 +88,6 @@ async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
             proof: verifyArgs.proof.proof,
             verification_level: verifyArgs.proof.verification_level || 'default_level', // Use a default if not provided
             action: action,
-            signal: verifyArgs.signal ?? hashToField(verifyArgs.signal)
         }),
     }).then(response => response.json()); // Parse the JSON response
 

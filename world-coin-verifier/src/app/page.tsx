@@ -1,5 +1,6 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState } from "react"; // Add useState import
+import { useLocation } from "react-router-dom";
 import { IDKitWidget, VerificationLevel } from "@worldcoin/idkit";
 
 const app_id = process.env.NEXT_PUBLIC_APP_ID as `app_${string}`;
@@ -15,7 +16,6 @@ const verifyProof = async (proof: any) => {
         body: JSON.stringify({
             proof: proof,
             verifiedAddress: "0x4D0b9B12fF3C0f6aA72C6800c309585A343f3bB5",
-            signal: "0x4D0b9B12fF3C0f6aA72C6800c309585A343f3bB5",
         }),
     });
 
@@ -27,7 +27,6 @@ const verifyProof = async (proof: any) => {
         body: JSON.stringify({
             proof: proof,
             verifiedAddress: "0x4D0b9B12fF3C0f6aA72C6800c309585A343f3bB5",
-            siganl: "0x4D0b9B12fF3C0f6aA72C6800c309585A343f3bB5",
         }),
     });
 
@@ -44,9 +43,56 @@ const verifyProof = async (proof: any) => {
 };
 
 export default function Home() {
+    const [address, setAddress] = useState("");
+    const [proof, setProof] = useState<any>(null);
+    const [close, setClose] = useState(false);
+    const [isWidgetVisible, setWidgetVisible] = useState(false); // New state to control visibility
+
+    useEffect(() => {
+        const queryParams = new URLSearchParams(window.location.search);
+        const addressFromQuery = queryParams.get("address");
+        if (addressFromQuery) {
+            setAddress(addressFromQuery);
+        }
+    }, []);
+
+    useEffect(() => {
+        setWidgetVisible(true);
+    }, [address]);
+
+    useEffect(() => {
+        if (close) {
+            closeWebview(proof);
+        }
+    }, [proof, close]);
+
+    useEffect(() => {
+        const messageHandler = (event: MessageEvent) => {
+            const data = JSON.parse(event.data);
+            console.log("Data from React Native:", data);
+        };
+
+        // Add event listener
+        window.addEventListener("message", messageHandler);
+
+        return () => {
+            // Remove the same event listener
+            window.removeEventListener("message", messageHandler);
+        };
+    }, []);
+
+    const closeWebview = (proof: any) => {
+        // Perform necessary operations and return result
+        const response = { status: true, proof: proof };
+        //@ts-ignore
+        window.ReactNativeWebView.postMessage(JSON.stringify(response));
+    };
+
     // TODO: Functionality after verifying
     const onSuccess = () => {
         console.log("Success");
+
+        setClose(true);
     };
 
     // New function to call the API with dummy data
@@ -69,23 +115,47 @@ export default function Home() {
         console.log(result);
     };
 
+    const saveAndTriggerVerification = (proof: any) => {
+        setProof(proof);
+        verifyProof(proof);
+    };
+
     return (
         <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
             <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-                <IDKitWidget
-                    app_id={app_id}
-                    action={action}
-                    // On-chain only accepts Orb verifications
-                    verification_level={VerificationLevel.Orb}
-                    // @ts-ignore
-                    signal={"0x4D0b9B12fF3C0f6aA72C6800c309585A343f3bB5"}
-                    handleVerify={verifyProof}
-                    onSuccess={onSuccess}
-                >
-                    {({ open }) => <button onClick={open}>Verify with World ID</button>}
-                </IDKitWidget>
+                {isWidgetVisible && ( // Conditional rendering based on state
+                    <IDKitWidget
+                        app_id={app_id}
+                        action={action}
+                        // On-chain only accepts Orb verifications
+                        verification_level={VerificationLevel.Orb}
+                        // @ts-ignore
+                        handleVerify={saveAndTriggerVerification}
+                        onSuccess={onSuccess}
+                    >
+                        {/* @ts-ignore */}
+                        {({ open }) => <button onClick={open}>Verify with World ID</button>}
+                    </IDKitWidget>
+                )}
                 {/* Button to submit dummy data */}
                 <button onClick={submitDummyData}>Submit Dummy Data</button>
+                {/* Button to show the widget */}
+                <button>Address: {address}</button>
+                <button
+                    onClick={() =>
+                        closeWebview({
+                            uses: 1,
+                            success: true,
+                            action: "who",
+                            max_uses: 1,
+                            nullifier_hash: "0x133106bae4e8c22fcc8bae9e8b8e7d9ffbb3b957b6415824d30fde60cba99255",
+                            created_at: "2024-09-21T21:40:30.003252+00:00",
+                            verification_level: "orb",
+                        })
+                    }
+                >
+                    test
+                </button>
             </main>
         </div>
     );

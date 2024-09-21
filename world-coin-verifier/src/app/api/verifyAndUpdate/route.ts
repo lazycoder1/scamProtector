@@ -49,7 +49,7 @@ async function updateBlockchain(verifyArgs: VerifyArgs) {
     // Example contract interaction
     const worldCoinProof = verifyArgs.proof;
     const txHash = await accountClient.writeContract({
-        address: "0x23C8C02eFaf710a0E8ADe9431404FFdEdbD11B0C", // Replace with your contract address
+        address: "0xEb3F4D20d9295B49EEa32da1F72A735aBf8576BA", // Replace with your contract address
         abi: spamProtectorAbi,
         functionName: "verifyUserByOwner", // Replace with your function name
         args: [
