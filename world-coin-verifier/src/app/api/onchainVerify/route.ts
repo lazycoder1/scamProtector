@@ -1,9 +1,10 @@
 import { NextResponse } from 'next/server';
 import { decodeAbiParameters, http } from "viem";
-import { morphHolesky } from "viem/chains";
+import { baseSepolia, morphHolesky } from "viem/chains";
 import { spamProtectorAbi } from "../../../abi/spamProtectorAbi";
 import { createPublicClient, createWalletClient } from "viem"; // Import necessary functions
 import { privateKeyToAccount } from "viem/accounts";
+import { hashToField } from '@worldcoin/idkit-core/hashing';
 
 export type Proof = {
     proof: `0x${string}`;
@@ -15,6 +16,7 @@ export type Proof = {
 export type VerifyArgs = {
     proof: Proof;
     verifiedAddress: `0x${string}`;
+    signal: `0x${string}`
 };
 
 export async function POST(request: Request) {
@@ -31,12 +33,12 @@ const unpackedProof = (proof: `0x${string}`) => decodeAbiParameters([{ type: "ui
 const privateKey = process.env.PVT_KEY as `0x${string}`;
 
 // Create clients for the Morph Helesky network
-const publicClient = createPublicClient({ chain: morphHolesky, transport: http("https://rpc-quicknode-holesky.morphl2.io/") });
+const publicClient = createPublicClient({ chain: morphHolesky, transport: http("https://sepolia.base.org") });
 const account = privateKeyToAccount(privateKey);
 const accountClient = createWalletClient({
-    chain: morphHolesky,
+    chain: baseSepolia,
     account: account,
-    transport: http("https://rpc-quicknode-holesky.morphl2.io/"),
+    transport: http("https://sepolia.base.org"),
 });
 
 export async function verifyAndUpdate(verifyArgs: VerifyArgs) {
@@ -49,9 +51,9 @@ export async function updateBlockchain(verifyArgs: VerifyArgs) {
     // Example contract interaction
     const worldCoinProof = verifyArgs.proof;
     const txHash = await accountClient.writeContract({
-        address: "0x7de9953Ee02033b4A10F941107c655FdB76E54D5", // Replace with your contract address
+        address: "0xaA374f997005ddc7C1Dc8D8234ca79ffe5306347", // Replace with your contract address
         abi: spamProtectorAbi,
-        functionName: "verifyUserByOwner", // Replace with your function name
+        functionName: "verifyUser", // Replace with your function name
         args: [
             BigInt(worldCoinProof!.merkle_root),
             BigInt(worldCoinProof!.nullifier_hash),
@@ -73,6 +75,7 @@ async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
         proof: verifyArgs.proof.proof,
         verification_level: verifyArgs.proof.verification_level || 'default_level', // Use a default if not provided
         action: action,
+        signal: verifyArgs.signal ?? hashToField(verifyArgs.signal)
     }))
 
     const apiUrl = 'https://developer.worldcoin.org' + `/api/v2/verify/${app_id}`; // Replace with your actual API URL
@@ -87,6 +90,7 @@ async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
             proof: verifyArgs.proof.proof,
             verification_level: verifyArgs.proof.verification_level || 'default_level', // Use a default if not provided
             action: action,
+            signal: verifyArgs.signal ?? hashToField(verifyArgs.signal)
         }),
     }).then(response => response.json()); // Parse the JSON response
 

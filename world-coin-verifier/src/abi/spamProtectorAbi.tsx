@@ -205,6 +205,59 @@ export const spamProtectorAbi = [
     {
         inputs: [
             {
+                components: [
+                    {
+                        internalType: "uint256",
+                        name: "callTime",
+                        type: "uint256",
+                    },
+                    {
+                        internalType: "string",
+                        name: "obfuscatedNumber",
+                        type: "string",
+                    },
+                    {
+                        internalType: "string",
+                        name: "label",
+                        type: "string",
+                    },
+                    {
+                        internalType: "enum SpamCallReporter.CallType",
+                        name: "callType",
+                        type: "uint8",
+                    },
+                ],
+                internalType: "struct SpamCallReporter.CallData[]",
+                name: "calls",
+                type: "tuple[]",
+            },
+            {
+                internalType: "address",
+                name: "submitter",
+                type: "address",
+            },
+        ],
+        name: "storeSpamOnlyOwner",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
+                internalType: "address",
+                name: "add",
+                type: "address",
+            },
+        ],
+        name: "unverify",
+        outputs: [],
+        stateMutability: "nonpayable",
+        type: "function",
+    },
+    {
+        inputs: [
+            {
                 internalType: "uint256",
                 name: "root",
                 type: "uint256",
@@ -218,6 +271,11 @@ export const spamProtectorAbi = [
                 internalType: "uint256[8]",
                 name: "proof",
                 type: "uint256[8]",
+            },
+            {
+                internalType: "address",
+                name: "userAddress",
+                type: "address",
             },
         ],
         name: "verifyUser",

@@ -49,7 +49,7 @@ export async function updateBlockchain(verifyArgs: VerifyArgs) {
     // Example contract interaction
     const worldCoinProof = verifyArgs.proof;
     const txHash = await accountClient.writeContract({
-        address: "0x7de9953Ee02033b4A10F941107c655FdB76E54D5", // Replace with your contract address
+        address: "0x23C8C02eFaf710a0E8ADe9431404FFdEdbD11B0C", // Replace with your contract address
         abi: spamProtectorAbi,
         functionName: "verifyUserByOwner", // Replace with your function name
         args: [
@@ -87,6 +87,7 @@ async function verifyWithWorldCoin(verifyArgs: VerifyArgs) {
             proof: verifyArgs.proof.proof,
             verification_level: verifyArgs.proof.verification_level || 'default_level', // Use a default if not provided
             action: action,
+
         }),
     }).then(response => response.json()); // Parse the JSON response
 
