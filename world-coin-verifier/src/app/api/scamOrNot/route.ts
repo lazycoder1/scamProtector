@@ -16,7 +16,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
     }
 }
 
-const scamOrNott = async (number) => {
+const scamOrNott = async (number: string) => {
     console.log(hashIt(number));
     const flaggedCalls = await fetchFlaggedCalls(hashIt(number));
     if (flaggedCalls.length > 2) {
@@ -25,7 +25,7 @@ const scamOrNott = async (number) => {
     else return { scam: false };
 }
 
-const fetchFlaggedCalls = async (obfuscatedNumber) => {
+const fetchFlaggedCalls = async (obfuscatedNumber: string) => {
     const query = `
     query MyQuery { 
       flaggedCalls(
