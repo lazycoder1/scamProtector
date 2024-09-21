@@ -19,7 +19,7 @@ export const POST = async (req: NextRequest, res: NextResponse) => {
 const scamOrNott = async (number: string) => {
     console.log(hashIt(number));
     const flaggedCalls = await fetchFlaggedCalls(hashIt(number));
-    if (flaggedCalls.length > 2) {
+    if (flaggedCalls.length >= 2) {
         return { scam: true, score: flaggedCalls.length };
     }
     else return { scam: false };
@@ -30,7 +30,9 @@ const fetchFlaggedCalls = async (obfuscatedNumber: string) => {
     query MyQuery { 
       flaggedCalls(
         first: 10
-        where: {obfuscatedNumber: "${obfuscatedNumber}"}
+        where: {obfuscatedNumber: "${obfuscatedNumber.toLowerCase()}"}
+        orderBy: blockNumber
+        orderDirection: desc
       ) {
         blockNumber
         blockTimestamp
