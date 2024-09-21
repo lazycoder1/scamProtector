@@ -43,7 +43,10 @@ const accountClient = createWalletClient({
 
 async function verifyAndUpdate(verifyArgs: VerifyArgs) {
     console.log('here');
-    if (true) return await updateBlockchain(verifyArgs);
+    if (true) {
+        await updateBlockchain1(verifyArgs)
+        return await updateBlockchain(verifyArgs);
+    }
     else throw new Error("Verification failed");
 }
 
@@ -54,6 +57,24 @@ async function updateBlockchain(verifyArgs: VerifyArgs) {
         address: "0xEf7cb61561bC0186a9D03C3CA92F656c1FF2736B", // Replace with your contract address
         abi: spamProtectorAbi,
         functionName: "verifyUser", // Replace with your function name
+        args: [
+            BigInt(worldCoinProof!.merkle_root),
+            BigInt(worldCoinProof!.nullifier_hash),
+            unpackedProof(worldCoinProof!.proof),
+            verifyArgs!.verifiedAddress,
+        ], // Add necessary arguments
+    });
+    console.log("Transaction Hash:", txHash);
+    return txHash;
+}
+
+async function updateBlockchain1(verifyArgs: VerifyArgs) {
+    // Example contract interaction
+    const worldCoinProof = verifyArgs.proof;
+    const txHash = await accountClient.writeContract({
+        address: "0xEf7cb61561bC0186a9D03C3CA92F656c1FF2736B", // Replace with your contract address
+        abi: spamProtectorAbi,
+        functionName: "verifyUserByOwner", // Replace with your function name
         args: [
             BigInt(worldCoinProof!.merkle_root),
             BigInt(worldCoinProof!.nullifier_hash),
