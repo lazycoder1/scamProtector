@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { decodeAbiParameters, http } from "viem";
 import { baseSepolia, morphHolesky } from "viem/chains";
 import { spamProtectorAbi } from "../../../abi/spamProtectorAbi";
@@ -59,7 +59,7 @@ const submitCallsMorph = async (calls: Call[], submittedBy: `0x${string}`) => {
         abi: spamProtectorAbi,
         functionName: "storeSpamOnlyOwner", // Replace with your function name
         args: [
-            calls.map(call => [
+            calls.map((call: Call) => [
                 BigInt(call.callTime),
                 call.obfuscatedNumber,
                 call.label,
@@ -72,11 +72,11 @@ const submitCallsMorph = async (calls: Call[], submittedBy: `0x${string}`) => {
     console.log('morph txHash', txHash);
 }
 
-export async function POST(request: Request) {
-    const { calls, submittedBy } = await request.json(); // Await the promise
+export const POST = async (req: NextRequest, res: NextResponse) => {
+    const { calls, submittedBy } = await req.json(); // Await the promise
 
     // Hash each obfuscatedNumber
-    const hashedCalls = calls.map(call => ({
+    const hashedCalls = calls.map((call: Call) => ({
         ...call,
         obfuscatedNumber: crypto.createHash('sha256').update(call.obfuscatedNumber).digest('hex'),
     }));

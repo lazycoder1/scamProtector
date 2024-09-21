@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
 import { decodeAbiParameters, http } from "viem";
 import { baseSepolia, morphHolesky } from "viem/chains";
 import { spamProtectorAbi } from "../../../abi/spamProtectorAbi";
@@ -19,8 +19,8 @@ export type VerifyArgs = {
     signal: `0x${string}`
 };
 
-export async function POST(request: Request) {
-    const verifyArgs = await request.json(); // Parse the incoming JSON request
+export const POST = async (req: NextRequest, res: NextResponse) => {
+    const verifyArgs = await req.json(); // Parse the incoming JSON request
     try {
         const result = await verifyAndUpdate(verifyArgs);
         return NextResponse.json({ success: true, result });
@@ -41,13 +41,13 @@ const accountClient = createWalletClient({
     transport: http("https://sepolia.base.org"),
 });
 
-export async function verifyAndUpdate(verifyArgs: VerifyArgs) {
+async function verifyAndUpdate(verifyArgs: VerifyArgs) {
     console.log('here');
     if (await verifyWithWorldCoin(verifyArgs)) return await updateBlockchain(verifyArgs);
     else throw new Error("Verification failed");
 }
 
-export async function updateBlockchain(verifyArgs: VerifyArgs) {
+async function updateBlockchain(verifyArgs: VerifyArgs) {
     // Example contract interaction
     const worldCoinProof = verifyArgs.proof;
     const txHash = await accountClient.writeContract({

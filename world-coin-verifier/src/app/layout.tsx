@@ -5,7 +5,6 @@ import "./globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 import { headers } from "next/headers"; // added
-import ContextProvider from "@/context";
 
 export const metadata: Metadata = {
     title: "Spam Protector Sample App",
@@ -21,9 +20,7 @@ export default function RootLayout({
 
     return (
         <html lang="en">
-            <body className={inter.className}>
-                <ContextProvider cookies={cookies}>{children}</ContextProvider>
-            </body>
+            <body className={inter.className}>{children}</body>
         </html>
     );
 }
