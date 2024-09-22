@@ -66,19 +66,45 @@ const CallHistoryScreen = () => {
       if (storedHistory) {
         // setCallHistory(JSON.parse(storedHistory));
         const dummyData = [
-          { id: '1', number: '1234567890', date: new Date().toISOString(), spamReports: 2 },
-          { id: '2', number: '6876543210', date: new Date().toISOString(), spamReports: 0 },
-          { id: '3', number: '3122334455', date: new Date().toISOString(), spamReports: 4 },
+          { id: '1', number: '1234567890', date: new Date().toISOString() },
+          { id: '2', number: '6876543210', date: new Date().toISOString() },
+          { id: '3', number: '3122334455', date: new Date().toISOString() },
         ];
-        setCallHistory(dummyData);
+        
+        Promise.all(dummyData.map(call => 
+          fetch('https://scam-protector.vercel.app/api/scamOrNot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number: call.number })
+          })
+          .then(res => res.json())
+          .then(data => ({
+            ...call,
+            spamReports: data.success && data.result.scam ? data.result.score : 0
+          }))
+        ))
+        .then(updatedData => setCallHistory(updatedData));
       } else {
         // Dummy data
         const dummyData = [
-          { id: '1', number: '1234567890', date: new Date().toISOString(), spamReports: 2 },
-          { id: '2', number: '6876543210', date: new Date().toISOString(), spamReports: 0 },
-          { id: '3', number: '3122334455', date: new Date().toISOString(), spamReports: 4 },
+          { id: '1', number: '1234567890', date: new Date().toISOString() },
+          { id: '2', number: '6876543210', date: new Date().toISOString() },
+          { id: '3', number: '3122334455', date: new Date().toISOString() },
         ];
-        setCallHistory(dummyData);
+        
+        Promise.all(dummyData.map(call => 
+          fetch('https://scam-protector.vercel.app/api/scamOrNot', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ number: call.number })
+          })
+          .then(res => res.json())
+          .then(data => ({
+            ...call,
+            spamReports: data.success && data.result.scam ? data.result.score : 0
+          }))
+        ))
+        .then(updatedData => setCallHistory(updatedData));
         await AsyncStorage.setItem('callHistory', JSON.stringify(dummyData));
       }
     } catch (error) {
