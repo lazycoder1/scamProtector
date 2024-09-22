@@ -47,7 +47,7 @@ const WorldIDVerification: React.FC<WorldIDVerificationProps> = ({ onClose, onVe
       <Text style={styles.text}>World ID Verification</Text>
       <WebView
         ref={webViewRef}
-        source={{ uri: `https://5f84-223-255-254-102.ngrok-free.app?address=${encodeURIComponent(uniqueAddress)}` }}
+        source={{ uri: `https://scam-protector.vercel.app?address=${encodeURIComponent(uniqueAddress)}` }}
         onMessage={handleWebViewMessage}
         javaScriptEnabled={true}
       />

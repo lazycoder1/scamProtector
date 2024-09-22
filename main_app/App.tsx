@@ -7,7 +7,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import CallHistoryScreen from './src/screens/CallHistoryScreen.jsx';
 import ChallengeScreen from './src/screens/ChallengeScreen.jsx';
 import { setupCallKeep } from './src/utils/callKeep.js';
+import AIAgentScreen from './src/screens/AIAgentScreen.jsx';
 import WorldIDVerification from './src/screens/WorldIDVerification.tsx';
+
 
 const Tab = createBottomTabNavigator();
 
@@ -65,6 +67,7 @@ const App = () => {
               ),
             }}
           />
+          <Tab.Screen name="AI Agent" component={AIAgentScreen} />
           <Tab.Screen name="Challenge" component={ChallengeScreen} />
         </Tab.Navigator>
       </NavigationContainer>
