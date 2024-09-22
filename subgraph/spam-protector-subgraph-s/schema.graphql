@@ -1,0 +1,27 @@
+type FlaggedCall @entity(immutable: true) {
+    id: Bytes!
+    callTime: BigInt! # uint256
+    obfuscatedNumber: String! # string
+    submittedBy: Bytes! # address
+    label: String! # string
+    callType: Int! # uint8
+    verified: Boolean! # bool
+    blockNumber: BigInt!
+    blockTimestamp: BigInt!
+    transactionHash: Bytes!
+}
+
+type spam @entity {
+    id: Bytes!
+    spam: Boolean!
+}
+
+type Proof @entity(immutable: true) {
+    id: Bytes!
+    root: BigInt! # uint256
+    nullifierHash: BigInt! # uint256
+    proof: [BigInt!] # uint256[8]
+    blockNumber: BigInt!
+    blockTimestamp: BigInt!
+    transactionHash: Bytes!
+}

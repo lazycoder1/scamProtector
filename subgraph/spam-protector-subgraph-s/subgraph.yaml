@@ -1,0 +1,27 @@
+specVersion: 0.0.5
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum
+    name: SpamProtector
+    network: base-sepolia
+    source:
+      address: "0xaA374f997005ddc7C1Dc8D8234ca79ffe5306347"
+      abi: SpamProtector
+      startBlock: 15591792
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.7
+      language: wasm/assemblyscript
+      entities:
+        - FlaggedCall
+        - Proof
+      abis:
+        - name: SpamProtector
+          file: ./abis/SpamProtector.json
+      eventHandlers:
+        - event: FlaggedCall(indexed uint256,string,indexed address,string,uint8,bool)
+          handler: handleFlaggedCall
+        - event: Proof(uint256,uint256,uint256[8])
+          handler: handleProof
+      file: ./src/spam-protector.ts

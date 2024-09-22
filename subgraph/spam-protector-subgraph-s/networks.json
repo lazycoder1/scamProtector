@@ -1,0 +1,8 @@
+{
+    "base-sepolia": {
+        "SpamProtector": {
+            "address": "0xaA374f997005ddc7C1Dc8D8234ca79ffe5306347",
+            "startBlock": 15591792
+        }
+    }
+}
