@@ -20,7 +20,7 @@ const scamOrNott = async (number: string) => {
     console.log(hashIt(number));
     const flaggedCalls = await fetchFlaggedCalls(hashIt(number));
     if (flaggedCalls.length >= 2) {
-        return { scam: true, score: flaggedCalls.length };
+        return { scam: true, score: flaggedCalls.length, meta: flaggedCalls };
     }
     else return { scam: false };
 }
